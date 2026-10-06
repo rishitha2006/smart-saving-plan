@@ -1,0 +1,39 @@
+SMART SAVING PLAN — FINAL REACT VERSION
+========================================
+
+This version keeps the existing Spring Boot + MongoDB backend and uses React for the frontend navigation/rendering layer.
+
+FIXES IN THIS VERSION
+---------------------
+1. Landing page Login/Create Account buttons navigate correctly.
+2. Login and Signup cards are centered vertically and horizontally.
+3. Signup validation is available to the React page (the old app.js dependency is no longer required).
+4. All normal internal links are intercepted by React, including links with query strings.
+5. Logout works and returns to the landing page.
+6. Create my financial plan correctly follows the Spring redirect to Dashboard.
+7. If onboarding validation fails, the onboarding page remains visible with the server error.
+8. Expense and financial amount fields use numeric HTML inputs with decimal steps.
+9. Expense/income/budget/profile forms navigate back to the correct page after successful submission.
+10. Original finance calculations and MongoDB persistence are not replaced.
+11. Original CSS remains in the project; the final visual polish adds page-specific CSS.
+12. Larger typography, centered authentication pages, improved spacing, cards, buttons and responsive styling are included.
+
+RUN
+---
+Backend:
+- Open the Smart-Saving-Plan folder in IntelliJ IDEA.
+- Use Java 21.
+- Make sure MongoDB is running according to your existing application configuration.
+- Reload Maven dependencies.
+- Run SmartSavingPlanApplication.
+
+Frontend dependencies:
+- Open a terminal in Smart-Saving-Plan/frontend.
+- Run: npm install
+- Run: npm run dev
+
+The Spring application serves the backend and React page bridge. If you use the existing project configuration/IDE run setup, keep that configuration.
+
+IMPORTANT
+---------
+Do not copy files from an older React ZIP over this version. This ZIP is the final combined version.

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Create Account | Smart Saving Plan</title><link rel="stylesheet" href="/css/app.css"></head>
+<body class="auth-page"><div class="auth-shell">
+<div class="auth-brand">Smart<span>Saving Plan</span></div>
+<div class="auth-card">
+<a class="back" href="/">← Back to home</a>
+<div class="form-head"><div class="icon-bubble">✦</div><h1>Create your account</h1><p>Create your account and start planning in seconds.</p></div>
+<div th:if="${error}" class="alert error" th:text="${error}"></div>
+<form action="/signup" method="post" onsubmit="return validateSignup()">
+<label>Full name<input id="name" name="name" type="text" placeholder="e.g. Your Name" required></label>
+<label>Email address<input id="email" name="email" type="email" placeholder="you@example.com" required></label>
+<label>Username <small>optional</small><input name="username" type="text" placeholder="Choose a username"></label>
+<label>Password<input id="password" name="password" type="password" minlength="6" placeholder="At least 6 characters" required></label>
+<label>Address <small>optional</small><input name="address" type="text" placeholder="City / PG / Room"></label>
+<button class="btn primary full" type="submit">Create account & continue →</button>
+</form><p class="switch">Already have an account? <a href="/login">Login</a></p>
+</div></div><script src="/js/app.js"></script></body></html>

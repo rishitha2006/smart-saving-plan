@@ -1,0 +1,4 @@
+.page-planning .future-hero{border-radius:30px;box-shadow:0 25px 70px rgba(37,99,235,.13)}
+.page-planning .future-summary-card,.page-planning .future-year-card{padding:26px;transition:transform .2s,box-shadow .2s}
+.page-planning .future-summary-card:hover,.page-planning .future-year-card:hover{transform:translateY(-4px);box-shadow:0 22px 55px rgba(29,31,66,.11)}
+.page-planning .future-value{font-size:26px;font-weight:850}

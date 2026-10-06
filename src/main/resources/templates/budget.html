@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Budget & Goals | Smart Saving Plan</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body class="app-page">
+
+<header class="topbar">
+
+    <a class="brand" href="/dashboard">
+        Smart<span>Saving Plan</span>
+    </a>
+
+    <nav>
+        <a href="/dashboard">Overview</a>
+        <a href="/transactions">Money Flow</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/monthly-plan">Monthly Plan</a>
+        <a href="/planning">Future Savings</a>
+        <a class="active" href="/budget">Budget &amp; Goals</a>
+        <a href="/reports">Reports</a>
+        <a href="/settings">Profile</a>
+    </nav>
+
+    <div class="top-actions">
+        <button class="theme-btn" onclick="toggleTheme()">◐</button>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+
+</header>
+
+
+<main class="dashboard-wrap">
+
+    <!-- Welcome -->
+    <div class="welcome">
+        <div>
+            <span class="eyebrow">BUDGET CONTROL</span>
+
+            <h1>Give every rupee a clear job.</h1>
+
+            <p>
+                Set simple monthly limits and Smart Saving Plan will tell you
+                when a category is getting close to its limit.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Statistics -->
+    <section class="stats">
+
+        <!-- Monthly Income -->
+        <div class="stat">
+            <span>Monthly income</span>
+
+            <strong>
+                ₹<span th:text="${@moneyFormatter.format(totalIncome)}">
+                    0.00
+                </span>
+            </strong>
+
+            <small class="description">
+                Your money in this month
+            </small>
+        </div>
+
+
+        <!-- Total Spending -->
+        <div class="stat">
+            <span>Planned + added</span>
+
+            <strong>
+                ₹<span th:text="${@moneyFormatter.format(totalExpense)}">
+                    0.00
+                </span>
+            </strong>
+
+            <small class="description">
+                Total spending
+            </small>
+        </div>
+
+
+        <!-- Amount Left -->
+        <div class="stat">
+            <span>Amount left</span>
+
+            <strong th:text="${balanceDisplay}">
+                ₹0.00
+            </strong>
+
+            <small class="description" th:text="${balanceLabel}">
+                Available
+            </small>
+        </div>
+
+
+        <!-- Goal Countdown -->
+        <div class="stat highlight goal-countdown-stat">
+
+            <span>Goal countdown</span>
+
+            <strong class="goal-eta"
+                    th:text="${goalEta}">
+                Set a savings target
+            </strong>
+
+            <small class="goal-capacity">
+                At current saving capacity
+            </small>
+
+        </div>
+
+    </section>
+
+
+    <!-- Monthly Limits -->
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <span class="eyebrow">MONTHLY LIMITS</span>
+
+                <h2>Category budgets</h2>
+
+                <p>
+                    Leave a budget at 0 if you do not want to track
+                    that category.
+                </p>
+            </div>
+
+        </div>
+
+
+        <form action="/budget/update"
+              method="post"
+              class="budget-form">
+
+            <label>
+                Food
+                <input name="food" type="number" min="0" step="0.01" th:value="${budgets['Food']}">
+            </label>
+
+
+            <label>
+                Grocery
+                <input name="grocery" type="number" min="0" step="0.01" th:value="${budgets['Grocery']}">
+            </label>
+
+
+            <label>
+                Housing
+                <input name="housing" type="number" min="0" step="0.01" th:value="${budgets['Housing']}">
+            </label>
+
+
+            <label>
+                Transport
+                <input name="transport" type="number" min="0" step="0.01" th:value="${budgets['Transport']}">
+            </label>
+
+
+            <label>
+                Shopping
+                <input name="shopping" type="number" min="0" step="0.01" th:value="${budgets['Shopping']}">
+            </label>
+
+
+            <label>
+                Utilities
+                <input name="utilities" type="number" min="0" step="0.01" th:value="${budgets['Utilities']}">
+            </label>
+
+
+            <label>
+                Education
+                <input name="education" type="number" min="0" step="0.01" th:value="${budgets['Education']}">
+            </label>
+
+
+            <label>
+                Healthcare
+                <input name="healthcare" type="number" min="0" step="0.01" th:value="${budgets['Healthcare']}">
+            </label>
+
+
+            <label>
+                Entertainment
+                <input name="entertainment" type="number" min="0" step="0.01" th:value="${budgets['Entertainment']}">
+            </label>
+
+
+            <label>
+                Other
+                <input name="other" type="number" min="0" step="0.01" th:value="${budgets['Other']}">
+            </label>
+
+            <div class="budget-submit">
+                <button class="btn primary" type="submit">
+                    Save budgets
+                </button>
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- Budget Health -->
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <span class="eyebrow">LIVE STATUS</span>
+                <h2>Budget health</h2>
+            </div>
+
+        </div>
+
+
+        <div class="budget-list">
+
+            <div class="budget-item"
+                 th:each="entry : ${budgets}">
+
+                <div class="budget-item-head">
+
+                    <span th:text="${entry.key}">
+                        Food
+                    </span>
+
+                    <b th:if="${entry.value > 0}">
+                        ₹<span th:text="${@moneyFormatter.format(budgetSpent[entry.key])}">0.00</span>
+                        / ₹<span th:text="${@moneyFormatter.format(entry.value)}">0.00</span>
+                    </b>
+                    <b class="not-tracked" th:if="${entry.value <= 0}">Not tracked</b>
+
+                </div>
+
+
+                <div class="budget-bar">
+                    <i th:style="${'width:' + budgetPercentages[entry.key] + '%'}">
+                    </i>
+                </div>
+
+                <div class="budget-live-status">
+                    <span th:if="${entry.value <= 0}" class="status-muted">Not tracked</span>
+                    <span th:if="${entry.value > 0 and budgetPercentages[entry.key] < 80}" class="status-good">On track · <span th:text="${@moneyFormatter.format(budgetRemainingByCategory[entry.key])}">0.00</span> remaining</span>
+                    <span th:if="${entry.value > 0 and budgetPercentages[entry.key] >= 80 and budgetPercentages[entry.key] < 90}" class="status-watch">Getting close · <span th:text="${@moneyFormatter.format(budgetRemainingByCategory[entry.key])}">0.00</span> remaining</span>
+                    <span th:if="${entry.value > 0 and budgetPercentages[entry.key] >= 90 and budgetPercentages[entry.key] < 100}" class="status-warning">Almost at limit · <span th:text="${@moneyFormatter.format(budgetRemainingByCategory[entry.key])}">0.00</span> remaining</span>
+                    <span th:if="${entry.value > 0 and budgetPercentages[entry.key] >= 100}" class="status-danger">Limit reached · spending needs attention</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Budget Alerts -->
+        <div class="alert-stack"
+             th:if="${!budgetAlerts.isEmpty()}">
+
+            <div class="alert-row"
+                 th:each="a : ${budgetAlerts}"
+                 th:text="${a}">
+                Budget alert
+            </div>
+
+        </div>
+
+
+        <!-- No Alerts -->
+        <div class="empty"
+             th:if="${budgetAlerts.isEmpty()}">
+
+            🎉 No tracked category is currently at 80% or more of its budget.
+
+        </div>
+
+    </section>
+
+
+    <!-- Savings Goal -->
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <span class="eyebrow">SAVINGS GOAL</span>
+
+                <h2 th:text="${goalTitle}">
+                    Savings goal
+                </h2>
+
+                <p>
+                    Keep your target visible and understand how long it may take.
+                </p>
+
+            </div>
+
+            <a class="btn ghost" href="/settings">
+                Edit goal
+            </a>
+
+        </div>
+
+
+        <div class="goal-big-grid">
+
+            <!-- Current Savings -->
+            <div>
+
+                <span class="eyebrow">
+                    SAVED NOW
+                </span>
+
+
+                <div class="big-money">
+
+                    ₹<span th:text="${@moneyFormatter.format(user.currentSavings)}">
+                        0.00
+                    </span>
+
+                </div>
+
+
+                <!-- Goal Progress -->
+                <div class="goal-track">
+
+                    <i th:style="${'width:' + goalProgress + '%'}">
+                    </i>
+
+                </div>
+
+
+                <p>
+
+                    <b>
+                        <span th:text="${@moneyFormatter.formatWhole(goalProgress)}">
+                            0
+                        </span>% complete
+                    </b>
+
+                    · ₹<span th:text="${@moneyFormatter.format(goalGap)}">
+                        0.00
+                    </span>
+                    remaining
+
+                </p>
+
+            </div>
+
+
+            <!-- Estimated Goal Time -->
+            <div class="goal-countdown goal-countdown-main">
+
+                <span>
+                    Estimated time
+                </span>
+
+
+                <strong class="goal-eta-main"
+                        th:text="${goalEta}">
+                    Set a saving target to estimate time
+                </strong>
+
+
+                <small class="goal-description">
+
+                    Based on your current estimated saving capacity of
+                    ₹<span th:text="${@moneyFormatter.format(recommendedSaving)}">
+                        0.00
+                    </span>/month.
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Achievements -->
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <span class="eyebrow">ACHIEVEMENTS</span>
+                <h2>Your progress badges</h2>
+            </div>
+
+        </div>
+
+
+        <div class="badge-grid">
+
+            <span class="achievement"
+                  th:each="b : ${badges}"
+                  th:text="${b}">
+                💚 Within income
+            </span>
+
+
+            <span class="empty"
+                  th:if="${badges.isEmpty()}">
+                Keep tracking your finances to unlock your first badge.
+            </span>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="/js/app.js"></script>
+
+
+<!-- Smart Saving Plan personal notifications -->
+<div class="sw-notification-area" th:if="${user != null}">
+  <button class="sw-notification-bell" id="swNotificationBell" type="button" aria-label="Open notifications" aria-expanded="false">
+    <span aria-hidden="true">♧</span><span>Notifications</span>
+  </button>
+  <aside class="sw-notification-panel" id="swNotificationPanel" hidden>
+    <div class="sw-notification-heading"><div><strong>Your notifications</strong><small>Personal updates based on your spending</small></div><button type="button" id="swNotificationClose" aria-label="Close">×</button></div>
+    <div class="sw-notification-list" id="swNotificationList">
+      <div class="sw-notification-empty" th:if="${#lists.isEmpty(budgetAlerts)}">You're all caught up. We'll let you know when a budget needs attention.</div>
+      <div class="sw-notification-item" th:each="notice : ${budgetAlerts}" th:text="${notice}">Budget update</div>
+    </div>
+  </aside>
+</div>
+<script>
+(()=>{const area=document.querySelector('.sw-notification-area');if(!area)return;const bell=document.getElementById('swNotificationBell'),panel=document.getElementById('swNotificationPanel'),close=document.getElementById('swNotificationClose');bell.addEventListener('click',()=>{panel.hidden=!panel.hidden;bell.setAttribute('aria-expanded',String(!panel.hidden));});close.addEventListener('click',()=>{panel.hidden=true;bell.setAttribute('aria-expanded','false');});})();
+</script>
+
+</body>
+</html>

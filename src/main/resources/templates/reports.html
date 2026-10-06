@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Reports | Smart Saving Plan</title><link rel="stylesheet" href="/css/app.css"></head><body class="app-page">
+<header class="topbar"><a class="brand" href="/dashboard">Smart<span>Saving Plan</span></a><nav><a href="/dashboard">Overview</a><a href="/transactions">Money Flow</a><a href="/analytics">Analytics</a><a href="/monthly-plan">Monthly Plan</a><a href="/planning">Future Savings</a><a href="/budget">Budget & Goals</a><a class="active" href="/reports">Reports</a><a href="/settings">Profile</a></nav><div class="top-actions"><button class="theme-btn" onclick="toggleTheme()">◐</button><a href="/logout" class="logout">Logout</a></div></header>
+<main class="dashboard-wrap report-page"><div class="welcome"><div><span class="eyebrow">YOUR FINANCIAL REPORT</span><h1>A simple report you can save or print.</h1><p>Use the browser's print option to save this page as a PDF, or download your transaction data as CSV.</p></div><button class="btn primary" onclick="window.print()">Print / Save as PDF</button></div>
+<section class="report-summary"><div class="report-number"><span>Current savings</span><strong>₹<span th:text="${@moneyFormatter.format(user.currentSavings)}">0.00</span></strong></div><div class="report-number"><span>Monthly income</span><strong>₹<span th:text="${@moneyFormatter.format(totalIncome)}">0.00</span></strong></div><div class="report-number"><span>Monthly spending</span><strong>₹<span th:text="${@moneyFormatter.format(totalExpense)}">0.00</span></strong></div><div class="report-number"><span>Estimated monthly saving</span><strong>₹<span th:text="${@moneyFormatter.format(recommendedSaving)}">0.00</span></strong></div></section>
+<section class="panel"><div class="panel-head"><div><span class="eyebrow">INSIGHTS</span><h2>What Smart Saving Plan sees</h2></div></div><div class="insight-list"><div class="insight-row" th:each="i : ${insights}"><span>💡</span><b th:text="${i}">Insight</b></div></div></section>
+<section class="panel"><div class="panel-head"><div><span class="eyebrow">HEALTH SCORE</span><h2><span th:text="${health}">78</span>/100 · <span th:text="${healthLabel}">Good</span></h2></div></div><div class="reason-list"><div th:each="r : ${healthReasons}" th:text="${r}">Reason</div></div></section>
+<section class="panel"><div class="panel-head"><div><span class="eyebrow">TRANSACTION DATA</span><h2>Download your records</h2><p>CSV is useful for Excel, Google Sheets and project demonstrations.</p></div><div class="report-actions"><button class="btn dark" onclick="downloadTransactionsCsv()">Download Transactions CSV</button><button class="btn ghost" onclick="downloadMonthlySummaryCsv()">Download Monthly Summary</button></div></div><div id="reportData" hidden><span th:each="e : ${expenses}" th:attr="data-row=${e.date+'|'+e.category+'|'+e.note+'|'+e.source+'|'+e.amount}"></span></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Source</th><th>Amount</th></tr></thead><tbody><tr th:each="e : ${expenses}"><td th:text="${e.date}">date</td><td th:text="${e.category}">Food</td><td th:text="${e.note}">Transaction</td><td th:text="${e.source}">manual</td><td>−₹<span th:text="${@moneyFormatter.format(e.amount)}">0.00</span></td></tr></tbody></table></div></section>
+</main><script src="/js/app.js"></script>
+<!-- Smart Saving Plan personal notifications -->
+<div class="sw-notification-area" th:if="${user != null}">
+  <button class="sw-notification-bell" id="swNotificationBell" type="button" aria-label="Open notifications" aria-expanded="false">
+    <span aria-hidden="true">♧</span><span>Notifications</span>
+  </button>
+  <aside class="sw-notification-panel" id="swNotificationPanel" hidden>
+    <div class="sw-notification-heading"><div><strong>Your notifications</strong><small>Personal updates based on your spending</small></div><button type="button" id="swNotificationClose" aria-label="Close">×</button></div>
+    <div class="sw-notification-list" id="swNotificationList">
+      <div class="sw-notification-empty" th:if="${#lists.isEmpty(budgetAlerts)}">You're all caught up. We'll let you know when a budget needs attention.</div>
+      <div class="sw-notification-item" th:each="notice : ${budgetAlerts}" th:text="${notice}">Budget update</div>
+    </div>
+  </aside>
+</div>
+<script>
+(()=>{const area=document.querySelector('.sw-notification-area');if(!area)return;const bell=document.getElementById('swNotificationBell'),panel=document.getElementById('swNotificationPanel'),close=document.getElementById('swNotificationClose');bell.addEventListener('click',()=>{panel.hidden=!panel.hidden;bell.setAttribute('aria-expanded',String(!panel.hidden));});close.addEventListener('click',()=>{panel.hidden=true;bell.setAttribute('aria-expanded','false');});})();
+</script>
+
+</body></html>

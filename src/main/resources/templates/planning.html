@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Future Savings | Smart Saving Plan</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body class="app-page">
+
+<header class="topbar">
+    <a class="brand" href="/dashboard">Smart<span>Saving Plan</span></a>
+
+    <nav>
+        <a href="/dashboard">Overview</a>
+        <a href="/transactions">Money Flow</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/monthly-plan">Monthly Plan</a>
+        <a class="active" href="/planning">Future Savings</a>
+        <a href="/budget">Budget & Goals</a>
+        <a href="/reports">Reports</a>
+        <a href="/settings">Profile</a>
+    </nav>
+
+    <div class="top-actions">
+        <button class="theme-btn" onclick="toggleTheme()">◐</button>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</header>
+
+
+<main class="dashboard-wrap">
+
+    <!-- PAGE INTRO -->
+    <div class="welcome">
+        <div>
+            <span class="eyebrow">LONG-TERM MONEY PLAN</span>
+
+            <h1>Your future savings, made simple.</h1>
+
+            <p>
+                See how your current savings could grow over 10 years.
+                Every year starts with the previous year's balance, then adds
+                estimated savings and investment growth.
+            </p>
+        </div>
+
+        <a href="/monthly-plan" class="btn ghost">
+            View 12-month plan →
+        </a>
+    </div>
+
+
+    <!-- FUTURE HERO -->
+    <section class="future-hero">
+
+        <div class="future-hero-main">
+            <span class="eyebrow">STARTING SAVINGS</span>
+
+            <div class="future-big">
+                ₹<span th:text="${@moneyFormatter.format(user.currentSavings)}">
+                    0.00
+                </span>
+            </div>
+
+            <p>
+                Your original savings amount. This is the starting point
+                for every future estimate.
+            </p>
+        </div>
+
+
+        <div class="future-mini">
+            <span>Monthly income</span>
+
+            <strong class="future-value">
+                ₹<span th:text="${@moneyFormatter.format(user.monthlySalary+user.monthlyOtherIncome)}">
+                    0.00
+                </span>
+            </strong>
+
+            <small class="description">Salary + regular other income</small>
+        </div>
+
+
+        <div class="future-mini">
+            <span>Monthly spending</span>
+
+            <strong class="future-value">
+                ₹<span th:text="${@moneyFormatter.format(baseMonthlySpending)}">
+                    0.00
+                </span>
+            </strong>
+
+            <small class="description">Your baseline spending plan</small>
+        </div>
+
+
+        <div class="future-mini">
+            <span>Expected return</span>
+
+            <strong class="future-value">
+                <span th:text="${@moneyFormatter.format(user.investmentReturnRate)}">
+                    8.00
+                </span>%
+            </strong>
+
+            <small class="description">Investment growth assumption</small>
+        </div>
+
+    </section>
+
+
+    <!-- 10 YEAR OUTLOOK -->
+    <section class="panel">
+
+        <div class="panel-head">
+            <div>
+                <span class="eyebrow">10-YEAR OUTLOOK</span>
+
+                <h2>How your money may grow</h2>
+
+                <p>
+                    Each card shows exactly what happens during that year.
+                </p>
+            </div>
+
+            <span class="badge">
+                Estimate · not guaranteed
+            </span>
+        </div>
+
+
+        <!-- YEAR CARDS -->
+        <div class="future-year-grid">
+
+            <article
+                    class="future-year-card"
+                    th:each="row : ${futureYears}"
+            >
+
+                <!-- YEAR HEADER -->
+                <div class="future-year-top">
+
+                    <span class="year-pill">
+                        YEAR
+                        <b th:text="${row['year']}">1</b>
+                    </span>
+
+                    <span class="year-arrow">→</span>
+
+                </div>
+
+
+                <!-- END BALANCE -->
+                <div class="future-end">
+                    ₹<span th:text="${@moneyFormatter.format(row['end'])}">
+                        0.00
+                    </span>
+                </div>
+
+                <small class="future-label">
+                    Estimated balance at year end
+                </small>
+
+
+                <!-- BREAKDOWN -->
+                <div class="future-breakdown">
+
+                    <div>
+                        <span>Started with</span>
+
+                        <b class="future-money">
+                            ₹<span th:text="${@moneyFormatter.format(row['start'])}">
+                                0.00
+                            </span>
+                        </b>
+                    </div>
+
+
+                    <div>
+                        <span>Income</span>
+
+                        <b class="future-money">
+                            ₹<span th:text="${@moneyFormatter.format(row['income'])}">
+                                0.00
+                            </span>
+                        </b>
+                    </div>
+
+
+                    <div>
+                        <span>Spending</span>
+
+                        <b class="future-money negative">
+                            −₹<span th:text="${@moneyFormatter.format(row['expense'])}">
+                                0.00
+                            </span>
+                        </b>
+                    </div>
+
+
+                    <div>
+                        <span>Saved</span>
+
+                        <b class="future-money positive">
+                            ₹<span th:text="${@moneyFormatter.format(row['saved'])}">
+                                0.00
+                            </span>
+                        </b>
+                    </div>
+
+
+                    <div>
+                        <span>Investment growth</span>
+
+                        <b class="future-money positive">
+                            ₹<span th:text="${@moneyFormatter.format(row['interest'])}">
+                                0.00
+                            </span>
+                        </b>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- MILESTONES -->
+    <section class="panel future-summary">
+
+        <div class="panel-head">
+            <div>
+                <span class="eyebrow">YOUR MILESTONES</span>
+
+                <h2>What the forecast means</h2>
+
+                <p>
+                    Use these numbers to understand the direction of your finances.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="future-summary-grid">
+
+            <div class="future-summary-card">
+                <span>After 1 year</span>
+
+                <strong>
+                    ₹<span th:text="${@moneyFormatter.format(oneYear)}">
+                        0.00
+                    </span>
+                </strong>
+
+                <small>Estimated balance</small>
+            </div>
+
+
+            <div class="future-summary-card">
+                <span>After 5 years</span>
+
+                <strong>
+                    ₹<span th:text="${@moneyFormatter.format(fiveYear)}">
+                        0.00
+                    </span>
+                </strong>
+
+                <small>Estimated balance</small>
+            </div>
+
+
+            <div class="future-summary-card">
+                <span>After 10 years</span>
+
+                <strong>
+                    ₹<span th:text="${@moneyFormatter.format(tenYear)}">
+                        0.00
+                    </span>
+                </strong>
+
+                <small>Estimated balance</small>
+            </div>
+
+
+            <div class="future-summary-card">
+                <span>Current goal</span>
+
+                <strong>
+                    ₹<span th:text="${@moneyFormatter.format(goalGap)}">
+                        0.00
+                    </span>
+                </strong>
+
+                <small>Amount still needed</small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- GOAL TRACKER -->
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+                <span class="eyebrow">GOAL TRACKER</span>
+
+                <h2 th:text="${goalTitle}">
+                    Savings goal
+                </h2>
+
+                <p>
+                    Keep your target visible while planning for the future.
+                </p>
+            </div>
+
+            <a href="/settings" class="btn ghost">
+                Update goal
+            </a>
+
+        </div>
+
+
+        <div class="goal-planning">
+
+            <div>
+
+                <div class="goal-number">
+                    ₹<span th:text="${@moneyFormatter.format(user.currentSavings)}">
+                        0.00
+                    </span>
+
+                    <small>saved</small>
+                </div>
+
+
+                <div class="goal-track">
+                    <i th:style="${'width:' + goalProgress + '%'}"></i>
+                </div>
+
+
+                <p>
+                    <b>
+                        <span th:text="${@moneyFormatter.formatWhole(goalProgress)}">
+                            0
+                        </span>%
+                        funded
+                    </b>
+
+                    · ₹<span th:text="${@moneyFormatter.format(goalGap)}">
+                        0.00
+                    </span>
+                    remaining
+                </p>
+
+            </div>
+
+
+            <div class="planning-highlight">
+
+                <span>Emergency fund</span>
+
+                <strong>
+                    <span th:text="${@moneyFormatter.format(emergencyMonths)}">
+                        0.00
+                    </span>
+                    months
+                </strong>
+
+                <small>
+                    Current savings compared with monthly spending
+                </small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- WHAT-IF PLANNER -->
+    <section class="panel simulator">
+
+        <div class="panel-head">
+
+            <div>
+                <span class="eyebrow">WHAT-IF PLANNER</span>
+
+                <h2>Try a better future</h2>
+
+                <p>
+                    Change one assumption and see the estimated monthly effect.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="grid three">
+
+            <label>
+                Salary change (%)
+
+                <input
+                        id="simSalary"
+                        type="number"
+                        value="0"
+                        step="1"
+                >
+            </label>
+
+
+            <label>
+                Spending change (₹)
+
+                <input
+                        id="simSpend"
+                        type="number"
+                        value="0"
+                        step="100"
+                >
+            </label>
+
+
+            <label>
+                Extra monthly saving (₹)
+
+                <input
+                        id="simSave"
+                        type="number"
+                        value="0"
+                        step="100"
+                >
+            </label>
+
+        </div>
+
+
+        <button
+                class="btn primary"
+                onclick="runSimulator()"
+        >
+            Calculate scenario
+        </button>
+
+
+        <div
+                id="simResult"
+                class="sim-result"
+        >
+            Try a scenario to see how your monthly balance could change.
+        </div>
+
+    </section>
+
+
+    <!-- NOTE -->
+    <div class="future-note">
+        <b>💡 Important:</b>
+        Future Savings is an estimate based on the salary growth and
+        investment-return assumptions in your Profile. Actual income,
+        expenses, returns and market conditions can be different.
+    </div>
+
+</main>
+
+<script src="/js/app.js"></script>
+
+
+<!-- Smart Saving Plan personal notifications -->
+<div class="sw-notification-area" th:if="${user != null}">
+  <button class="sw-notification-bell" id="swNotificationBell" type="button" aria-label="Open notifications" aria-expanded="false">
+    <span aria-hidden="true">♧</span><span>Notifications</span>
+  </button>
+  <aside class="sw-notification-panel" id="swNotificationPanel" hidden>
+    <div class="sw-notification-heading"><div><strong>Your notifications</strong><small>Personal updates based on your spending</small></div><button type="button" id="swNotificationClose" aria-label="Close">×</button></div>
+    <div class="sw-notification-list" id="swNotificationList">
+      <div class="sw-notification-empty" th:if="${#lists.isEmpty(budgetAlerts)}">You're all caught up. We'll let you know when a budget needs attention.</div>
+      <div class="sw-notification-item" th:each="notice : ${budgetAlerts}" th:text="${notice}">Budget update</div>
+    </div>
+  </aside>
+</div>
+<script>
+(()=>{const area=document.querySelector('.sw-notification-area');if(!area)return;const bell=document.getElementById('swNotificationBell'),panel=document.getElementById('swNotificationPanel'),close=document.getElementById('swNotificationClose');bell.addEventListener('click',()=>{panel.hidden=!panel.hidden;bell.setAttribute('aria-expanded',String(!panel.hidden));});close.addEventListener('click',()=>{panel.hidden=true;bell.setAttribute('aria-expanded','false');});})();
+</script>
+
+</body>
+</html>

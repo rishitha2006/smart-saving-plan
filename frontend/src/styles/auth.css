@@ -1,0 +1,42 @@
+.page-login,.page-signup,.page-onboarding{min-height:100vh}
+.page-login .auth-card,.page-signup .auth-card,.page-onboarding .setup-card{border-radius:30px;box-shadow:0 30px 90px rgba(29,31,66,.13);border:1px solid var(--line)}
+.page-login input,.page-signup input,.page-onboarding input,.page-onboarding select{min-height:54px;font-size:17px}
+.page-login .btn,.page-signup .btn,.page-onboarding .btn{min-height:52px}
+
+/* Final visual polish: centered auth/landing pages with larger, calmer typography. */
+body.page-login, body.page-signup {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid !important;
+  place-items: center !important;
+  padding: 32px 18px !important;
+  box-sizing: border-box;
+}
+body.page-login .auth-page, body.page-signup .auth-page {
+  width: 100%;
+  min-height: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+}
+.auth-shell { width: min(540px, 100%); margin: auto; }
+.auth-card { padding: 42px; border-radius: 30px; }
+.auth-brand { font-size: 34px; margin-bottom: 24px; }
+.form-head h1 { font-size: clamp(32px, 5vw, 42px); line-height: 1.1; }
+.form-head p, .switch { font-size: 17px; }
+.auth-card form label { font-size: 17px; }
+.auth-card input { width: 100%; box-sizing: border-box; min-height: 58px; font-size: 18px; }
+.auth-card .btn { min-height: 58px; font-size: 18px; font-weight: 800; }
+
+body.page-index { min-height: 100vh; }
+body.page-index .hero { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; text-align: center; }
+body.page-index .hero-copy { width: min(900px, 94vw); margin: 0 auto; }
+body.page-index .hero h1 { font-size: clamp(48px, 7vw, 88px); line-height: .98; }
+body.page-index .hero p { max-width: 760px; margin-left: auto; margin-right: auto; font-size: 20px; }
+body.page-index .hero-actions, body.page-index .mini-features { justify-content: center; }
+
+@media (max-width: 600px) {
+  .auth-card { padding: 28px 22px; }
+  .auth-brand { font-size: 29px; }
+  body.page-index .hero h1 { font-size: 48px; }
+}

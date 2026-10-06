@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Overview | Smart Saving Plan</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body class="app-page">
+
+<header class="topbar">
+    <a class="brand" href="/dashboard">Smart<span>Saving Plan</span></a>
+
+    <nav>
+        <a class="active" href="/dashboard">Overview</a>
+        <a href="/transactions">Money Flow</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/monthly-plan">Monthly Plan</a>
+        <a href="/planning">Future Savings</a>
+        <a href="/budget">Budget &amp; Goals</a>
+        <a href="/reports">Reports</a>
+        <a href="/settings">Profile</a>
+    </nav>
+
+    <div class="top-actions">
+        <button class="theme-btn" onclick="toggleTheme()">◐</button>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+</header>
+
+<main class="dashboard-wrap">
+
+    <!-- WELCOME -->
+    <div class="welcome">
+        <div>
+            <span class="eyebrow">YOUR MONEY AT A GLANCE</span>
+
+            <h1>
+                Hello,
+                <span th:text="${user.name}">User</span>
+                👋
+            </h1>
+
+            <p>
+                Everything important is separated into simple sections
+                so you can understand your money quickly.
+            </p>
+        </div>
+
+        <a href="/monthly-plan" class="btn primary">
+            See my monthly plan →
+        </a>
+    </div>
+
+
+
+
+    <!-- SPENDING RISK FACTOR -->
+    <section class="risk-factor-card" aria-label="Spending risk factor">
+        <div class="risk-factor-head">
+            <div>
+                <span class="eyebrow">SPENDING RISK FACTOR</span>
+                <h2>Your spending risk is <span th:class="${riskColorClass}" th:text="${riskLevel}">Moderate Risk</span></h2>
+                <p>
+                    This score is based on how much of your monthly income is being consumed by planned or recorded spending.
+                    Lower spending keeps the risk lower.
+                </p>
+            </div>
+            <div class="risk-score" th:classappend="${riskColorClass}">
+                <strong th:text="${riskFactor}">50</strong><span>/100</span>
+            </div>
+        </div>
+
+        <div class="risk-meter-wrap">
+            <div class="risk-meter">
+                <div class="risk-meter-fill"
+                     th:style="${'width:' + riskFactor + '%'}"
+                     th:classappend="${riskColorClass}"></div>
+                <div class="risk-meter-marker"
+                     th:classappend="${riskColorClass}"
+                     th:style="${'left:calc(' + riskFactor + '% - 7px)'}"></div>
+            </div>
+            <div class="risk-scale">
+                <span>Very low</span>
+                <span>Low</span>
+                <span>Moderate</span>
+                <span>High</span>
+                <span>Critical</span>
+            </div>
+        </div>
+
+        <div class="risk-factor-footer">
+            <span>Spending rate: <strong th:text="${#numbers.formatDecimal(spendingPct, 1, 1) + '%'}">50.0%</strong></span>
+            <span th:if="${riskFactor <= 30}">Excellent control — you have strong room for saving.</span>
+            <span th:if="${riskFactor > 30 and riskFactor <= 50}">Healthy range — keep discretionary spending under control.</span>
+            <span th:if="${riskFactor > 50 and riskFactor <= 70}">Watch your spending — savings can be squeezed if costs rise.</span>
+            <span th:if="${riskFactor > 70 and riskFactor <= 85}">High pressure — consider reducing non-essential expenses.</span>
+            <span th:if="${riskFactor > 85}">Critical pressure — spending is consuming most or all of your income.</span>
+        </div>
+    </section>
+
+    <!-- INCOME HERO -->
+    <section class="income-hero">
+
+        <div>
+            <span class="eyebrow">THIS MONTH'S MONEY IN</span>
+
+            <h2>Monthly income</h2>
+
+            <div class="income-number">
+                ₹<span th:text="${@moneyFormatter.format(totalIncome)}">0.00</span>
+            </div>
+
+
+            <!-- SAVINGS -->
+            <div class="home-savings-row">
+
+                <div class="saving-item">
+
+                    <span class="saving-label">
+                        Saved till now
+                    </span>
+
+                    <strong class="saving-value">
+                        ₹<span th:text="${@moneyFormatter.format(user.currentSavings)}">0.00</span>
+                    </strong>
+
+                </div>
+
+
+                <div class="saving-item">
+
+                    <span class="saving-label">
+                        Estimated saving
+                    </span>
+
+                    <strong class="saving-value">
+                        ₹<span th:text="${@moneyFormatter.format(recommendedSaving)}">0.00</span>
+                        <small>/ month</small>
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <p>
+                Your regular income plus any extra income recorded this month.
+            </p>
+
+        </div>
+
+
+        <!-- INCOME BREAKDOWN -->
+        <div class="income-side">
+
+            <div>
+                <span>Salary</span>
+
+                <b>
+                    ₹<span th:text="${@moneyFormatter.format(user.monthlySalary)}">0.00</span>
+                </b>
+            </div>
+
+
+            <div>
+                <span>Other monthly income</span>
+
+                <b>
+                    ₹<span th:text="${@moneyFormatter.format(user.monthlyOtherIncome)}">0.00</span>
+                </b>
+            </div>
+
+
+            <div>
+                <span>Extra income this month</span>
+
+                <b>
+                    ₹<span th:text="${@moneyFormatter.format(totalIncome-user.monthlySalary-user.monthlyOtherIncome)}">0.00</span>
+                </b>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="alert" th:if="${expensePlanAdjusted}">
+        Category expenses total <strong>₹<span th:text="${@moneyFormatter.format(categoryExpenseTotal)}">0.00</span></strong>,
+        which is higher than your entered overall estimate of
+        <strong>₹<span th:text="${@moneyFormatter.format(enteredMonthlySpending)}">0.00</span></strong>.
+        Smart Saving Plan uses the higher category total for planning.
+    </div>
+
+
+    <!-- SIMPLE SUMMARY -->
+    <section class="stats compact-stats">
+
+        <div class="stat">
+            <span>Monthly spending</span>
+            <strong>₹<span th:text="${@moneyFormatter.format(totalExpense)}">0.00</span></strong>
+            <small>Plan or actual spending, whichever is higher</small>
+        </div>
+
+        <div class="stat highlight">
+            <span>Available after savings</span>
+            <strong>₹<span th:text="${@moneyFormatter.format(spendableAfterSaving)}">0.00</span></strong>
+            <small>Your flexible spending amount</small>
+        </div>
+
+        <div class="stat">
+            <span>Daily budget</span>
+            <strong>₹<span th:text="${@moneyFormatter.format(safeDailySpend)}">0.00</span></strong>
+            <small>Based on this month's available amount</small>
+        </div>
+
+        <div class="stat">
+            <span>Weekly budget</span>
+            <strong>₹<span th:text="${@moneyFormatter.format(safeWeeklySpend)}">0.00</span></strong>
+            <small>Based on your available amount</small>
+        </div>
+
+        <div class="stat">
+            <span>Financial health</span>
+            <strong><span th:text="${health}">78</span>/100</strong>
+            <small th:text="${healthLabel}">Good</small>
+        </div>
+
+    </section>
+
+
+    <!-- MONEY STATUS -->
+    <section class="money-status" th:classappend="${riskClass}">
+        <div class="status-main">
+            <span class="status-dot" th:text="${riskIcon}">🟢</span>
+            <div>
+                <span class="eyebrow">MONEY STATUS</span>
+                <h2 th:text="${risk}">Safe</h2>
+            </div>
+        </div>
+
+        <div class="status-metrics" th:if="${balance >= 0}">
+            <div>
+                <span>Spending pace</span>
+                <strong>₹<span th:text="${@moneyFormatter.format(dailySpend)}">0.00</span>/day</strong>
+            </div>
+            <div>
+                <span>Runway</span>
+                <strong th:text="${runwayDisplay}">2.9 days</strong>
+            </div>
+        </div>
+
+        <p class="status-message" th:if="${balance < 0}">
+            You are <strong>₹<span th:text="${@moneyFormatter.format(-balance)}">0.00</span></strong> over this month's income.
+        </p>
+        <p class="status-message" th:if="${balance >= 0}">
+            Your runway uses the <strong>available amount after planned savings</strong>, so savings are not counted as spendable money.
+        </p>
+    </section>
+
+
+    <!-- CONTENT GRID -->
+    <div class="content-grid">
+
+        <!-- CATEGORY -->
+        <section class="panel">
+
+            <div class="panel-head">
+
+                <div>
+
+                    <h2>
+                        Where did my money go?
+                    </h2>
+
+                    <p>
+                        Category view of your recorded spending.
+                    </p>
+
+                </div>
+
+                <a class="text-link" href="/analytics">
+                    View analytics →
+                </a>
+
+            </div>
+
+
+            <div
+                    class="category-list"
+                    th:if="${!categories.isEmpty()}"
+                    th:each="entry : ${categories}"
+            >
+
+                <div>
+
+                    <span th:text="${entry.key}">
+                        Food
+                    </span>
+
+                    <b>
+                        ₹<span th:text="${@moneyFormatter.format(entry.value)}">
+                            0.00
+                        </span>
+                    </b>
+
+                </div>
+
+
+                <div class="bar">
+
+                    <i
+                            th:style="${'width:' + categoryPercentages[entry.key] + '%'}"
+                    ></i>
+
+                </div>
+
+            </div>
+
+
+            <div
+                    th:if="${categories.isEmpty()}"
+                    class="empty"
+            >
+                Add your spending or import a statement to see the breakdown.
+            </div>
+
+        </section>
+
+
+        <!-- QUICK FINANCIAL PICTURE -->
+        <section class="panel">
+
+            <div class="panel-head">
+
+                <div>
+
+                    <h2>
+                        Quick financial picture
+                    </h2>
+
+                    <p>
+                        Simple numbers you can act on today.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-list">
+
+                <div>
+
+                    <span>
+                        Spending rate
+                    </span>
+
+                    <b>
+                        <span th:text="${spendingPct}">0</span>%
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Emergency fund
+                    </span>
+
+                    <b>
+                        <span th:text="${@moneyFormatter.format(emergencyMonths)}">
+                            0
+                        </span>
+                        months
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Savings goal
+                    </span>
+
+                    <b th:text="${goalTitle}">
+                        Savings goal
+                    </b>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Goal remaining
+                    </span>
+
+                    <b>
+                        ₹<span th:text="${@moneyFormatter.format(goalGap)}">
+                            0.00
+                        </span>
+                    </b>
+
+                </div>
+
+            </div>
+
+
+            <a class="btn ghost full" href="/planning">
+                See future savings →
+            </a>
+
+        </section>
+
+    </div>
+
+
+    <!-- SMART ACTION -->
+    <section class="panel">
+
+        <div class="panel-head">
+
+            <div>
+
+                <span class="eyebrow">
+                    SMART ACTION
+                </span>
+
+                <h2>
+                    What should you do next?
+                </h2>
+
+                <p>
+                    One practical suggestion based on your current numbers.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="insight">
+
+            <span>💡</span>
+
+            <div>
+
+                <b th:text="${suggestion}">
+                    Suggestion
+                </b>
+
+                <p>
+                    Use Money Flow to add transactions,
+                    Monthly Plan for your 12-month estimate,
+                    and Future Savings for long-term goals.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+
+
+<!-- Smart Saving Plan personal notifications -->
+<div class="sw-notification-area" th:if="${user != null}">
+  <button class="sw-notification-bell" id="swNotificationBell" type="button" aria-label="Open notifications" aria-expanded="false">
+    <span aria-hidden="true">♧</span><span>Notifications</span>
+  </button>
+  <aside class="sw-notification-panel" id="swNotificationPanel" hidden>
+    <div class="sw-notification-heading"><div><strong>Your notifications</strong><small>Personal updates based on your spending</small></div><button type="button" id="swNotificationClose" aria-label="Close">×</button></div>
+    <div class="sw-notification-list" id="swNotificationList">
+      <div class="sw-notification-empty" th:if="${#lists.isEmpty(budgetAlerts)}">You're all caught up. We'll let you know when a budget needs attention.</div>
+      <div class="sw-notification-item" th:each="notice : ${budgetAlerts}" th:text="${notice}">Budget update</div>
+    </div>
+  </aside>
+</div>
+<script>
+(()=>{const area=document.querySelector('.sw-notification-area');if(!area)return;const bell=document.getElementById('swNotificationBell'),panel=document.getElementById('swNotificationPanel'),close=document.getElementById('swNotificationClose');bell.addEventListener('click',()=>{panel.hidden=!panel.hidden;bell.setAttribute('aria-expanded',String(!panel.hidden));});close.addEventListener('click',()=>{panel.hidden=true;bell.setAttribute('aria-expanded','false');});})();
+</script>
+
+</body>
+</html>

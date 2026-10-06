@@ -1,0 +1,5 @@
+.page-transactions .filter-row{gap:14px;padding:20px;border-radius:20px;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line)}
+.page-transactions .transaction-row{min-height:72px;border-radius:16px;transition:transform .18s,background .18s,box-shadow .18s}
+.page-transactions .transaction-row:hover{transform:translateY(-2px);background:var(--soft);box-shadow:0 10px 24px rgba(29,31,66,.07)}
+.page-transactions .collector{padding:26px}
+.page-transactions .calendar-day{min-height:46px;border-radius:12px}
